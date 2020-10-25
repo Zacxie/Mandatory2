@@ -28,6 +28,7 @@ void *myMemory = NULL;
 
 static struct memoryList *head;
 static struct memoryList *next;
+static struct memoryList *trav;
 
 /* initmem must be called prior to mymalloc and myfree.
 
@@ -62,7 +63,7 @@ void initmem(strategies strategy, size_t sz)
 	myMemory = malloc(sz);
 
 	/* TODO: Initialize memory management structure. */
-	head = (truct memoryList *)malloc(sizeof(struct memoryList));
+	head = (struct memoryList *)malloc(sizeof(struct memoryList));
 	head->last = NULL;
 	head->next = NULL;
 	head->size = sz;
@@ -91,7 +92,7 @@ void *mymalloc(size_t requested)
 
 		while (1)
 		{
-			if ((trav->size >= requested) && (trav->allov == 0))
+			if ((trav->size >= requested) && (trav->alloc == 0))
 			{
 				if (next == NULL)
 				{
@@ -263,6 +264,7 @@ int mem_free()
 /* Number of bytes in the largest contiguous area of unallocated memory */
 int mem_largest_free()
 {
+	
 	int freeBytes = 0;
 	trav = head;
 
@@ -270,9 +272,9 @@ int mem_largest_free()
 	{
 		if (trav->alloc == 0)
 		{
-			if (size < trav->size)
+			if (freeBytes < trav->size)
 			{
-				size = current->size;
+				freeBytes= trav->size;
 			}
 		}
 		if (trav->next != NULL)
@@ -311,7 +313,7 @@ int mem_small_free(int size)
 			break;
 		}
 	}
-	return freeBytes;
+	return count;
 }
 
 char mem_is_alloc(void *ptr)
